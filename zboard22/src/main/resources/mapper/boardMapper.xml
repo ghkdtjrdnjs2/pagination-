@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.BoardDao">
+	<select id="count" resultType="long">
+		select count(*) from board
+	</select>
+	
+	<select id="findAll" resultType="com.example.demo.dto.BoardListDto">
+		<![CDATA[
+		select * from	
+			(select rownum as rnum, b.* from	
+				(select /*+ index_desc(board board_pk_bno)*/ 
+				bno, title, writer, to_char(write_time, 'YYYY-MM-DD HH24:MI:SS' )as writeTime, read_cnt as readCnt
+				 from board) b
+			where rownum<=#{endRownum})
+		where rnum>=#{startRownum}
+		]]>
+	</select>
+</mapper>
